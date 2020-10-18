@@ -1,0 +1,5 @@
+{
+    "gmail.clientId" : "place here your client id key .apps.googleusercontent.com",
+    "gmail.apiKey": "place here your api key",
+    "boond_wf" : "then rename the file in assets/cfg/setting.json"
+}
