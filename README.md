@@ -1,6 +1,6 @@
 # Boondmanager Candidate Workflow
 
-##Synopis
+## Synopis
 Boond WF is a single web page, to ease the transformation of emails sent by Job boards applications  into a Boond Managers Candidate.
 
 On the left side of the screen you can browse through your GMails.
@@ -31,7 +31,7 @@ To convert an email into a Candidate, the web site does the following operations
 The save botton on the left side of the action barr, is used to save the Candidate, and the related action.
 The view Candidate action opens a Boondmanager web page, to access to this Candidate.
 
-##Installation
+## Installation
 ## google setup.
 Before using this web page, you have to setup an ID Client Auth the this web site.
 On your Google Could Platform select API and Services / Identifier.
@@ -45,7 +45,7 @@ Copy the keys values in the file assets/cfg/settings.json
 You are now able to connect to your Google Mailbox.
 ## Boondmanager setup
 Connect to your Boond Manager with a admin user.
-Go to "Administration / Espace Developpeur" and the select "API/Sandbox".
+* Go to "Administration / Espace Developpeur" and the select "API/Sandbox".
 
 Note the Client Key and the Client token.
 These keys are not mandatory but are handful to enable Boond's automatic authentication.
@@ -54,7 +54,11 @@ In the Setting menu of the Web application, choose you Boond Manager settings :
 - Choose if you are using the Sandbox or the Production site.
 - Give the Client Key and Client token for auto login.
 
-##Disclaimer/Licenses
+* Go to "Admisitrction / Compte administrateur"
+
+Then in the "Autorisations et alertes" section enable  BasicAuth authentification.
+
+## Disclaimer/Licenses
 This work is licensed under the 
 Creative Commons Attribution-ShareAlike 4.0 International License.
 
@@ -68,7 +72,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  SOFTWARE.
  
-##Acknowledgments.
+## Acknowledgments.
 
 This web site is written in [Flutter](https://flutter.dev/docs), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
