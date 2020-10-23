@@ -1,7 +1,15 @@
 /*
- * Copyright (c) patrick 10/2020.
+ * Copyright (c) patrouil 2020.
  *  This work is licensed under the Creative Commons Attribution-ShareAlike 4.0 International License.
  *  To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/4.0/.
+ *
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ *  SOFTWARE.
  *
  */
 import 'package:logging/logging.dart';
@@ -10,12 +18,13 @@ import 'package:flutter/material.dart';
 import '../widget/BoondAuthBrowser.dart';
 
 import '../widget/menu_widget.dart';
+import 'AboutPage.dart';
 import 'Mail2BoondSettings.dart';
 
-enum _Mail2BoondMenuEvent { appsSettings }
+enum _Mail2BoondMenuEvent { appsSettings, about }
 
 class Mail2BoondMenuManager extends StatefulWidget {
-  static final Logger _log = Logger('Mail2BoondMenuManager');
+  final Logger _log = Logger('Mail2BoondMenuManager');
 
   Mail2BoondMenuManager() : super() {
     // _log.level = Level.FINE;
@@ -26,7 +35,7 @@ class Mail2BoondMenuManager extends StatefulWidget {
 }
 
 class Mail2BoondMenuManagerState extends State<Mail2BoondMenuManager> {
-  static final Logger _log = Logger('Mail2BoondMenuManager');
+  final Logger _log = Logger('Mail2BoondMenuManager');
 
   @override
   void initState() {
@@ -48,7 +57,9 @@ class Mail2BoondMenuManagerState extends State<Mail2BoondMenuManager> {
         icon: Icon(Icons.settings, color: Colors.black)));
 
     menuList.add(MenuItemText<_Mail2BoondMenuEvent>(
-        label: "About", icon: Icon(Icons.info, color: Colors.black)));
+        entryCode: _Mail2BoondMenuEvent.about,
+        label: "About",
+        icon: Icon(Icons.info, color: Colors.black)));
 
     _log.fine("[buildMenu] done");
 
@@ -67,6 +78,9 @@ class Mail2BoondMenuManagerState extends State<Mail2BoondMenuManager> {
     switch (code) {
       case _Mail2BoondMenuEvent.appsSettings:
         Mail2BoondSettings.mainSettings.show(this.context);
+        break;
+      case _Mail2BoondMenuEvent.about:
+        Navigator.of(this.context).pushNamed(AboutPage.route);
         break;
       default:
         throw UnimplementedError();

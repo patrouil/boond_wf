@@ -9,8 +9,10 @@ On the right side, you can edit the Boond's candidate to be created.
 
 The bottom part of each side contains the action button.
 
+Read here for detailed documentation :https://github.com/patrouil/boond_ws/wiki
+
 ## Usage
-- From your web browser, open the URL boond_wf.
+- From your web browser, open the boond_wf URL.
 - In the GMail action bar, at the bottom, connect to your Mail box.
 A Google login popup window will appear.
 - In the Boond action bar, at the bottom, connect to you Boond Manager workspace.
@@ -54,7 +56,7 @@ In the Setting menu of the Web application, choose you Boond Manager settings :
 - Choose if you are using the Sandbox or the Production site.
 - Give the Client Key and Client token for auto login.
 
-* Go to "Admisitrction / Compte administrateur"
+* Go to "Admisitration / Compte administrateur"
 
 Then in the "Autorisations et alertes" section enable  BasicAuth authentification.
 
@@ -74,10 +76,10 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  
 ## Acknowledgments.
 
-This web site is written in [Flutter](https://flutter.dev/docs), which offers tutorials,
+This web app is written in [Flutter](https://flutter.dev/docs), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
 
-I would like the thanks [Didier Boelens](https://www.didierboelens.com/fr/blog/) for his Blog. Many articles are very handful to understand Flutter's internal behavior.
+I would like to thanks [Didier Boelens](https://www.didierboelens.com/fr/blog/) for his Blog. Many articles are very handful to understand Flutter's internal behavior.
 
 Boondmanager name and Boondmanager logo are trademarks of [Wish SAS](https://www.boondmanager.com/mentions-legales/) 
 
