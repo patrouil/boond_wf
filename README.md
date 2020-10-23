@@ -33,6 +33,13 @@ To convert an email into a Candidate, the web site does the following operations
 The save botton on the left side of the action barr, is used to save the Candidate, and the related action.
 The view Candidate action opens a Boondmanager web page, to access to this Candidate.
 
+## Demo
+For a demo use this web site : https://boond-wf.adjp.dev/
+
+Use your own Boond Mamanger login/password to access to your workspace.
+This web site only record your IP address.
+Any settings and user loggind are recorded locally in your Browser.
+
 ## Installation
 ## google setup.
 Before using this web page, you have to setup an ID Client Auth the this web site.
