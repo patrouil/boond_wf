@@ -1,3 +1,9 @@
-## [0.0.1] - TODO: Add release date.
+## [0.0.1] - 18 October 2020
+Initial release.
 
-* TODO: Describe initial release.
+## [0.0.2-pre] - 22 Oct 2020
+License comment update for each file.
+
+Added About Page.
+
+Display README.md in the About page.
