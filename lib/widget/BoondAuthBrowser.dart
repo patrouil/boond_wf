@@ -1,7 +1,15 @@
 /*
- * Copyright (c) patrick 10/2020.
+ * Copyright (c) patrouil 2020.
  *  This work is licensed under the Creative Commons Attribution-ShareAlike 4.0 International License.
  *  To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/4.0/.
+ *
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ *  SOFTWARE.
  *
  */
 
@@ -27,9 +35,7 @@ class BoondAuthBrowser {
       String clientToken,
       String clientKey,
       @required String boondHost,
-      Level level}) async {
-    if (level != null) log.level = level;
-
+      Level level = Level.OFF}) async {
     return showDialog<BoondApi>(
         barrierDismissible: true,
         context: context,
@@ -159,7 +165,8 @@ class _BoondAuthUIState extends State<_BoondAuthUI> {
         BoondAuthBrowser.log.fine(
             "[_onLoginPressed] got a future error (${e.runtimeType.toString()}): ${e.toString()}");
 
-        this.warningMessage = "unable to load user '$emailValue' in Boond";
+        this.warningMessage =
+            "unable to load user '$emailValue' from Boond workspace";
         return null;
       });
     } catch (e) {
