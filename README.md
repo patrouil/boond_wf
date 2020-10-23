@@ -47,7 +47,7 @@ Copy the keys values in the file assets/cfg/settings.json
 You are now able to connect to your Google Mailbox.
 ## Boondmanager setup
 Connect to your Boond Manager with a admin user.
-Go to "Administration / Espace Developpeur" and the select "API/Sandbox".
+* Go to "Administration / Espace Developpeur" and the select "API/Sandbox".
 
 Note the Client Key and the Client token.
 These keys are not mandatory but are handful to enable Boond's automatic authentication.
@@ -55,6 +55,10 @@ These keys are not mandatory but are handful to enable Boond's automatic authent
 In the Setting menu of the Web application, choose you Boond Manager settings : 
 - Choose if you are using the Sandbox or the Production site.
 - Give the Client Key and Client token for auto login.
+
+* Go to "Admisitration / Compte administrateur"
+
+Then in the "Autorisations et alertes" section enable  BasicAuth authentification.
 
 ## Disclaimer/Licenses
 This work is licensed under the 
