@@ -64,4 +64,15 @@ class BoondAction {
   }
 
   void add(BoondActionAttachment a) => this.attachments.add(a);
+
+  void filterMimeType(List<String> positiveFilterKey) {
+    List<BoondActionAttachment> filteredList = List<BoondActionAttachment>();
+
+    this.attachments.forEach((element) {
+      if (positiveFilterKey.contains(element.fileType.type))
+        filteredList.add(element);
+    });
+
+    this.attachments = filteredList;
+  }
 }

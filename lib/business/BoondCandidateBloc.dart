@@ -39,12 +39,10 @@ class BoondCandidateBloc
   /// Candidate being currently displayed / edited.
   boond.CandidateGet editedCandidate;
   BoondAction editedActions;
-  //boond.ActionsAttributes editedActions;
-  //List<MailNavigatorMessagePart> attachements;
 
   ///
   BoondCandidateBloc() : super(BoondCandidateUIStateDisconnected()) {
-    _log.level = Level.FINEST;
+    //_log.level = Level.FINEST;
   }
 
   ///
@@ -116,7 +114,7 @@ class BoondCandidateBloc
       _log.fine("[_handleSaveRequest] saving ${this.editedCandidate}");
       this.editedCandidate =
           await this.model.saveCandidate(this.editedCandidate);
-// save action
+      // save action
 
       r.add(BoondCandidateUIStateSaved(candidate: this.editedCandidate));
       // keep result to  get action id for documents.
@@ -171,21 +169,27 @@ class BoondCandidateBloc
     return r;
   }
 
+  static final List<String> _validMimeTypes = ["word", "application/pdf"];
+
   Future<List<BoondCandidateUIState>> _handleMergeRequest(
       BoondCandidateUIEventMerge event) async {
+    // if no current candidate to merge create an emptu one
     List<BoondCandidateUIState> r = List<BoondCandidateUIState>();
     if (this.editedCandidate == null) {
       this.editedCandidate = await this.model.newCandidate();
     }
+    // notify a new candidate loaded.
     r.add(BoondCandidateUIStateMergeSender(
         senderFullName: event.messageToMerge.fromFullName,
         senderEmail: event.messageToMerge.fromEmail));
 
+    // make a new action fro mthe email.
     this.editedActions =
         BoondAction.fromMailNavigatorMessage(event.messageToMerge);
     this.editedActions.typeOf =
         await Settings().getInt(BoondSettings.BoondDefaultActionTypeOfKey, 0);
-
+    this.editedActions.filterMimeType(_validMimeTypes);
+    // notify of this new action.
     r.add(new BoondCandidateUIStateMergeAction(
         actionMessage: this.editedActions));
 
