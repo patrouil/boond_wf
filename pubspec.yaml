@@ -26,7 +26,6 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
   # Model Vue Controler Pattern
   flutter_bloc: ^6.0.0
   # Notification
@@ -44,10 +43,9 @@ dependencies:
   # more icons
   line_awesome_icons: ^1.0.4
   # mail  client
-  # enough_mail: ^0.0.10
-  imap_client: ^0.2.9
+  #imap_client: ^0.2.9
   # for google mail
-  googleapis: ^0.55.0
+  googleapis: ">=0.55.0  <1.0.0"
   googleapis_auth: ^0.2.12
   _discoveryapis_commons: ^0.2.0
   #
@@ -58,8 +56,11 @@ dependencies:
   jaguar_jwt: ^2.1.6
   #
   boond_api :
-    path : ../boond_api
-  # utilities ant the end due to namespace collision.
+    #path : ../boond_api
+    git:
+      url : https://github.com/patrouil/boond_api.git
+      ref : 0.0.1
+  # utilities at the end due to namespace collision.
   logging: ^0.11.4
   quiver: ^2.1.3
   intl: ^0.16.1

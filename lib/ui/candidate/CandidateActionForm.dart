@@ -13,20 +13,21 @@
  *
  */
 
-import 'package:boond_wf/entity/BoondAction.dart';
+import 'package:logging/logging.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:logging/logging.dart';
 import 'package:flutter/cupertino.dart';
 
 import 'package:boond_api/boond_api.dart' as boond
     show AppDictionnaryGet, AppDictApp;
 
+import '../../entity/BoondAction.dart';
 import '../../business/BoondCandidateBloc.dart';
 import '../../business/BoondCandidateUIEvent.dart';
 import '../../business/BoondCandidateUIState.dart';
-
 import '../../widget/BoondDropdownFormField.dart';
 import '../../widget/BoondActionWidget.dart';
 
@@ -34,8 +35,6 @@ class CandidateActionForm extends StatefulWidget {
   static final Logger log = Logger("CandidateActionForm");
 
   CandidateActionForm() : super() {
-    debugPaintSizeEnabled = true;
-
     // log.level = Level.FINE;
   }
 
@@ -48,9 +47,11 @@ class _CandidateActionFormState extends State<CandidateActionForm> {
 
   final _formKey = GlobalKey<FormState>();
 
-  final _emptyAvailabilityList = List<boond.AppDictApp>();
+  static final _emptyAvailabilityList = [
+    boond.AppDictApp(id: 0, value: "")
+  ]; // List<boond.AppDictApp>();
 
-  BoondAction currentAction = BoondAction();
+  BoondAction currentAction;
 
   Widget _buildTypeOfField(BuildContext _context) {
     List<boond.AppDictApp> avail = _emptyAvailabilityList;
@@ -65,13 +66,12 @@ class _CandidateActionFormState extends State<CandidateActionForm> {
 
     Widget w = BoondDropdownFormField<boond.AppDictApp>(
       entries: avail,
-      selectedId: candidateBloc.editedActions?.typeOf ?? 0,
+      selectedId: this.currentAction?.typeOf ?? 0,
       onChanged: (boond.AppDictApp v) {
         _log.fine("[_buildTypeOfField.onChanged] $v.id");
 
-        candidateBloc.editedActions?.typeOf = v.id;
+        this.currentAction?.typeOf = v.id;
       },
-      onTap: _handleEditingComplete,
       idOf: (boond.AppDictApp e) => e.id,
       labelOf: (boond.AppDictApp e) => e.value,
     );
@@ -79,39 +79,39 @@ class _CandidateActionFormState extends State<CandidateActionForm> {
   }
 
   Widget _buildTextField(BuildContext _context) {
-    BoondCandidateBloc candidateBloc =
-        BlocProvider.of<BoondCandidateBloc>(this.context);
-    assert(this.currentAction != null);
+    // currentAction could be null
     return BoondActionWidget(
-      theAction: this.currentAction,
+      theAction: this.currentAction ?? BoondAction(),
       editEnabled: true,
-      asChanged: _handleEditingComplete,
+      asChanged: (BoondAction a) {
+        this.currentAction?.bodyText = a.bodyText;
+      },
     );
   }
 
-  void _handleEditingComplete(BoondAction a) {
+  void _handleEditingComplete() {
     _log.fine("[_handleEditingComplete] ");
 
     BoondCandidateBloc b = BlocProvider.of<BoondCandidateBloc>(this.context);
 
-    b.add(BoondActionUIEventChanged(action: a));
+    if ((this.currentAction != null) && this._formKey.currentState.validate())
+      b.add(BoondActionUIEventChanged(action: this.currentAction));
   }
 
   Widget _buildFormWrapper(BuildContext _context) {
     return Form(
       key: this._formKey,
-      child: Column(
-        children: [
-          _buildTypeOfField(_context),
-          Expanded(child: _buildTextField(_context)),
-        ],
-      ),
+      onChanged: _handleEditingComplete,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      child: Container(
+          padding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 4.0),
+          child: Column(
+            children: [
+              _buildTypeOfField(_context),
+              Expanded(child: _buildTextField(_context)),
+            ],
+          )),
     );
-  }
-
-  @override
-  initState() {
-    super.initState();
   }
 
   @override
@@ -123,25 +123,21 @@ class _CandidateActionFormState extends State<CandidateActionForm> {
           BoondCandidateUIStateMergeAction(actionMessage: null).runtimeType,
           BoondCandidateUIStateSaved(candidate: null).runtimeType,
           BoondCandidateUIStateLoaded(candidate: null).runtimeType,
-          BoondCandidateUIStateDisconnected().runtimeType
+          BoondCandidateUIStateDisconnected().runtimeType,
+          BoondCandidateUIStateConnected(infoMessage: null).runtimeType
         ];
 
-        if (state is BoondCandidateUIStateMergeAction) {
-          this.currentAction = state.actionMessage;
-          //
-        } else if (state is BoondCandidateUIStateSaved)
-          this.currentAction = BoondAction();
-        else if (state is BoondCandidateUIStateLoaded)
-          this.currentAction = BoondAction();
-        else if (state is BoondCandidateUIStateDisconnected)
-          this.currentAction = BoondAction();
+        if (criteria.contains(state.runtimeType)) {
+          BoondCandidateBloc candidateBloc =
+              BlocProvider.of<BoondCandidateBloc>(_context);
+          this.currentAction = candidateBloc.editedActions;
+        }
 
         return criteria.contains(state.runtimeType);
       },
       builder: (BuildContext c, BoondCandidateUIState s) {
         // dont know why but have to locate the bloc.
-        BoondCandidateBloc candidateBloc =
-            BlocProvider.of<BoondCandidateBloc>(c);
+
         _log.fine("[build.builder] ");
 
         return _buildFormWrapper(c);

@@ -15,6 +15,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:logging/logging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart' show BlocBuilder, BlocProvider;
@@ -44,80 +45,58 @@ class BasicCandidateForm extends StatefulWidget {
 class _BasicCandidateFormState extends State<BasicCandidateForm> {
   static final Logger log = Logger("BasicCandidateForm");
 
-  final _formKey = GlobalKey<FormState>();
-  final _emptyAvailabilityList = List<boond.AppDictAvailability>();
+  static final List<boond.AppDictAvailability> _emptyAvailabilityList = [
+    boond.AppDictAvailability(id: 0, value: "")
+  ]; //List<boond.AppDictAvailability>();
 
-  @override
-  initState() {
-    super.initState();
-  }
+  final _formKey = GlobalKey<FormState>();
+
+  boond.CandidateGet currentCandidate;
 
   Widget _buildCivilite(BuildContext c) {
     List<boond.AppDictAvailability> avail;
 
     BoondCandidateBloc candidateBloc = BlocProvider.of<BoondCandidateBloc>(c);
     boond.AppDictionnaryGet d = candidateBloc?.model?.application_dict;
-    boond.CandidateGet shownCandidate = candidateBloc.editedCandidate;
 
     avail = d?.data?.setting?.civility ?? _emptyAvailabilityList;
     assert(avail != null);
     Widget w = BoondDropdownFormField<boond.AppDictAvailability>(
       entries: avail,
-      selectedId: shownCandidate?.data?.attributes?.civility ?? 0,
+      selectedId: this.currentCandidate?.data?.attributes?.civility ?? 0,
       onChanged: (boond.AppDictAvailability v) {
-        shownCandidate.data.attributes.civility = v.id;
+        this.currentCandidate.data.attributes.civility = v.id;
       },
-      onTap: _notifyChange,
       idOf: (dynamic e) => e.id,
       labelOf: (dynamic e) => e.value,
     );
     return w;
   }
 
-  void _notifyChange() {
-    log.fine("[_notifyChange] ");
-
-    BoondCandidateBloc b = BlocProvider.of<BoondCandidateBloc>(this.context);
-    boond.CandidateGet shownCandidate = b.editedCandidate;
-
-    b.add(BoondCandidateUIEventEditing(candidate: shownCandidate));
-  }
-
   Widget _buildFirstName(BuildContext c) {
-    BoondCandidateBloc b = BlocProvider.of<BoondCandidateBloc>(c);
-    boond.CandidateGet shownCandidate = b.editedCandidate;
-
-    String v = shownCandidate?.data?.attributes?.firstName;
-    return TextFormField(
+    String v = this.currentCandidate?.data?.attributes?.firstName;
+    Widget w = TextFormField(
       controller: TextEditingController(text: v),
+      textInputAction: TextInputAction.next,
       decoration: const InputDecoration(labelText: 'Firstname'),
       onChanged: (String v) {
-        if (shownCandidate != null)
-          shownCandidate.data.attributes.firstName = v.trim();
-        _notifyChange();
+        this.currentCandidate.data.attributes.firstName = v.trim();
       },
     );
+    return w;
   }
 
   Widget _buildLastName(BuildContext c) {
-    TextFormField w;
-    BoondCandidateBloc b = BlocProvider.of<BoondCandidateBloc>(c);
-    boond.CandidateGet shownCandidate = b.editedCandidate;
-
-    String v = shownCandidate?.data?.attributes?.lastName;
+    String v = this.currentCandidate?.data?.attributes?.lastName;
     log.fine("[_buildLastName] build $v");
 
-    w = TextFormField(
+    Widget w = TextFormField(
       controller: TextEditingController(text: v),
+      textInputAction: TextInputAction.next,
       decoration: const InputDecoration(labelText: 'Lastname'),
       onChanged: (String v) {
         log.fine("[_buildLastName] onChanged $v");
-
-        shownCandidate.data.attributes.lastName = v.trim().toUpperCase();
-        _notifyChange();
-      },
-      onEditingComplete: () {
-        w.controller.text = shownCandidate.data.attributes.lastName;
+        this.currentCandidate.data.attributes.lastName = v.trim().toUpperCase();
       },
     );
     return w;
@@ -125,18 +104,18 @@ class _BasicCandidateFormState extends State<BasicCandidateForm> {
 
   Widget _buildEmail(BuildContext c) {
     log.fine("[_buildEmail] builder");
-    BoondCandidateBloc b = BlocProvider.of<BoondCandidateBloc>(c);
-    boond.CandidateGet shownCandidate = b.editedCandidate;
 
-    String v = shownCandidate?.data?.attributes?.email1;
+    String v = this.currentCandidate?.data?.attributes?.email1;
     log.fine("[_buildEmail] calling formfield $v");
 
-    return TextFormField(
+    Widget w = TextFormField(
       controller: TextEditingController(text: v),
+      textInputAction: TextInputAction.next,
+      keyboardType: TextInputType.emailAddress,
       decoration: const InputDecoration(labelText: 'Email'),
       maxLines: 1,
       validator: (String value) {
-        if (value == null || value.isEmpty) return null;
+        if (value == null || value.isEmpty) return "email is mandatory";
         if (!RegExp(
                 r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?")
             .hasMatch(value)) {
@@ -145,35 +124,26 @@ class _BasicCandidateFormState extends State<BasicCandidateForm> {
         return null;
       },
       onChanged: (String v) {
-        shownCandidate.data.attributes.email1 = v.trim();
-        _notifyChange();
+        this.currentCandidate.data.attributes.email1 = v.trim();
       },
     );
+    return w;
   }
 
   Widget _buildPhone(BuildContext c) {
-    BoondCandidateBloc b = BlocProvider.of<BoondCandidateBloc>(c);
-    boond.CandidateGet shownCandidate = b.editedCandidate;
-
-    String v = shownCandidate?.data?.attributes?.phone1;
+    String v = this.currentCandidate?.data?.attributes?.phone1;
     log.fine("[_buildPhone] builder $v");
 
-    return TextFormField(
+    Widget w = TextFormField(
       controller: TextEditingController(text: v),
-      decoration: const InputDecoration(labelText: 'Phone'),
-      validator: (String value) {
-        if (value == null || value.isEmpty) return null;
-
-        //     if (!RegExp(r"[0-9.-+]+").hasMatch(value)) {
-        //     return 'This is not a valid phone number';
-        // }
-        return null;
-      },
+      textInputAction: TextInputAction.next,
+      keyboardType: TextInputType.phone,
+      decoration: const InputDecoration(labelText: 'Phone number'),
       onChanged: (String v) {
-        shownCandidate.data.attributes.phone1 = v.trim();
-        _notifyChange();
+        this.currentCandidate.data.attributes.phone1 = v.trim();
       },
     );
+    return w;
   }
 
   Widget _buildStatus(BuildContext c) {
@@ -183,13 +153,12 @@ class _BasicCandidateFormState extends State<BasicCandidateForm> {
 
     BoondCandidateBloc candidateBloc = BlocProvider.of<BoondCandidateBloc>(c);
     boond.AppDictionnaryGet d = candidateBloc?.model?.application_dict;
-    boond.CandidateGet shownCandidate = candidateBloc.editedCandidate;
 
     log.fine("[_buildStatus] builder app dict a $d ");
 
     avail = d?.data?.setting?.state?.candidate ?? _emptyAvailabilityList;
 
-    int v = shownCandidate?.data?.attributes?.state ?? 0;
+    int v = this.currentCandidate?.data?.attributes?.state ?? 0;
 
     log.fine("[_buildStatus] default is a ${v} ");
 
@@ -199,9 +168,8 @@ class _BasicCandidateFormState extends State<BasicCandidateForm> {
       hint: const Text("Status"),
       onChanged: (boond.AppDictAvailability v) {
         log.fine("[_buildStatus] changing to ${v.value} ");
-        shownCandidate.data.attributes.state = v.id;
+        this.currentCandidate.data.attributes.state = v.id;
       },
-      onTap: _notifyChange,
       idOf: (dynamic e) => e.id,
       labelOf: (dynamic e) => e.value,
     );
@@ -209,61 +177,34 @@ class _BasicCandidateFormState extends State<BasicCandidateForm> {
     return w;
   }
 
-  @override
-  Widget build(BuildContext _context) {
-    log.fine("[build] begin");
-    return BlocBuilder<BoondCandidateBloc, BoondCandidateUIState>(
-        //bloc: BlocProvider.of<BoondCandidateBloc>(context),
-        buildWhen:
-            (BoondCandidateUIState previousState, BoondCandidateUIState state) {
-      final List<Type> criteria = [
-        BoondCandidateUIStateLookupDone(candidateFound: null).runtimeType,
-        BoondCandidateUIStateLoaded(candidate: null).runtimeType,
-        BoondCandidateUIStateDisconnected().runtimeType,
-        BoondCandidateUIStateMergeSender(
-                senderFullName: null, senderEmail: null)
-            .runtimeType
-      ];
-      log.fine("[build] condition <${state}>");
-
-      if (state is BoondCandidateUIStateMergeSender)
-        _handleMergeEmail(state, _context);
-
-      return criteria.contains(state.runtimeType);
-    }, //
-        builder: (BuildContext c, BoondCandidateUIState s) {
-      log.fine("[build] builder");
-      // TODO add a form validation with mandatory fields.
-      Widget w = _buildFormWrapper(c);
-
-      return _buildDragWrapper(w, _context);
-    }); //;;
-  }
-
   Widget _buildFormWrapper(BuildContext _context) {
     return Form(
       key: _formKey,
-      child: Table(
-        border: TableBorder(bottom: BorderSide(), verticalInside: BorderSide()),
-        columnWidths: {
-          0: FractionColumnWidth(0.4),
-          1: FractionColumnWidth(0.6)
-        },
-        children: <TableRow>[
-          TableRow(children: [
-            Column(children: [
-              _buildStatus(_context),
-              _buildCivilite(_context),
-              _buildPhone(_context),
-            ]),
-            Column(children: [
-              _buildFirstName(_context),
-              _buildLastName(_context),
-              _buildEmail(_context),
-            ])
-          ]),
-        ],
-      ),
+      onChanged: _handleFormChanged,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      child: Container(
+          padding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 4.0),
+          child: Table(
+            // border: TableBorder(bottom: BorderSide(), verticalInside: BorderSide()),
+            columnWidths: {
+              0: FractionColumnWidth(0.4),
+              1: FractionColumnWidth(0.6)
+            },
+            children: <TableRow>[
+              TableRow(children: [
+                Column(children: [
+                  _buildStatus(_context),
+                  _buildCivilite(_context),
+                  _buildPhone(_context),
+                ]),
+                Column(children: [
+                  _buildFirstName(_context),
+                  _buildLastName(_context),
+                  _buildEmail(_context),
+                ])
+              ]),
+            ],
+          )),
     );
   }
 
@@ -291,10 +232,54 @@ class _BasicCandidateFormState extends State<BasicCandidateForm> {
     );
   }
 
+  @override
+  Widget build(BuildContext _context) {
+    log.fine("[build] begin");
+    return BlocBuilder<BoondCandidateBloc, BoondCandidateUIState>(
+        //bloc: BlocProvider.of<BoondCandidateBloc>(context),
+        buildWhen:
+            (BoondCandidateUIState previousState, BoondCandidateUIState state) {
+      final List<Type> criteria = [
+        BoondCandidateUIStateLookupDone(candidateFound: null).runtimeType,
+        BoondCandidateUIStateLoaded(candidate: null).runtimeType,
+        BoondCandidateUIStateDisconnected().runtimeType,
+        BoondCandidateUIStateConnected(infoMessage: null).runtimeType,
+        BoondCandidateUIStateMergeSender(
+                senderFullName: null, senderEmail: null)
+            .runtimeType,
+      ];
+      log.fine("[build] condition <${state}>");
+      // if build will be trigger. Get in sync with candidate value.
+      if (criteria.contains(state.runtimeType)) {
+        BoondCandidateBloc b =
+            BlocProvider.of<BoondCandidateBloc>(this.context);
+        this.currentCandidate = b.editedCandidate;
+      }
+      if (state is BoondCandidateUIStateMergeSender)
+        _handleMergeEmail(state, _context);
+
+      return criteria.contains(state.runtimeType);
+    }, //
+        builder: (BuildContext c, BoondCandidateUIState s) {
+      log.fine("[build] builder");
+      Widget w = _buildFormWrapper(c);
+
+      return _buildDragWrapper(w, _context);
+    }); //;;
+  }
+
+  void _handleFormChanged() {
+    log.fine("[_handleFormChanged] form changed");
+    if (this._formKey.currentState.validate()) {
+      BoondCandidateBloc b = BlocProvider.of<BoondCandidateBloc>(this.context);
+
+      b.add(BoondCandidateUIEventEditing(candidate: this.currentCandidate));
+    }
+  }
+
   void _handleMergeEmail(
       BoondCandidateUIStateMergeSender state, BuildContext c) {
-    BoondCandidateBloc boondBloc = BlocProvider.of<BoondCandidateBloc>(c);
-    boond.CandidateGet can = boondBloc.editedCandidate;
+    boond.CandidateGet can = this.currentCandidate;
 
     assert(can != null);
     can.data.attributes.lastName = state.senderFullName;
