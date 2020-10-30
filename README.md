@@ -9,7 +9,7 @@ On the right side, you can edit the Boond's candidate to be created.
 
 The bottom part of each side contains the action button.
 
-Read here for detailed documentation :https://github.com/patrouil/boond_ws/wiki
+Read here for detailed documentation : https://github.com/patrouil/boond_wf/wiki/00---Home
 
 ## Usage
 - From your web browser, open the boond_wf URL.
@@ -34,26 +34,26 @@ The save botton on the left side of the action barr, is used to save the Candida
 The view Candidate action opens a Boondmanager web page, to access to this Candidate.
 
 ## Demo
-For a demo use this web site : https://boond-wf.adjp.dev/
+For a demo use this website : https://boond-wf.adjp.dev/
 
-Use your own Boond Mamanger login/password to access to your workspace.
-This web site only record your IP address.
-Any settings and user loggind are recorded locally in your Browser.
+Use your own Boond Manager login/password to access to your workspace.
+This website only records your IP address.
+Settings and user login are recorded locally in your Browser.
 
 ## Installation
 ## google setup.
-Before using this web page, you have to setup an ID Client Auth the this web site.
+Before using this web page, you must setup an ID Client Auth for your website.
 On your Google Could Platform select API and Services / Identifier.
-Create an ID Client Identifier with theses parameters : 
+Create an ID Client Identifier with these parameters : 
 - Application type : Web.
 - Name : Boond Candidate workflow (_could be any name_)
-- Then enter the URI on your web site.
+- Then enter the URI on your website.
 Record the Client ID key ans the Client secret key.
 
-Copy the keys values in the file assets/cfg/settings.json 
+Copy the keys values in a file assets/cfg/settings.json 
 You are now able to connect to your Google Mailbox.
 ## Boondmanager setup
-Connect to your Boond Manager with a admin user.
+Connect to your Boond Manager with an admin user.
 * Go to "Administration / Espace Developpeur" and the select "API/Sandbox".
 
 Note the Client Key and the Client token.
@@ -61,11 +61,11 @@ These keys are not mandatory but are handful to enable Boond's automatic authent
 
 In the Setting menu of the Web application, choose you Boond Manager settings : 
 - Choose if you are using the Sandbox or the Production site.
-- Give the Client Key and Client token for auto login.
+- Give the Client Key and Client token to enable auto login feature.
 
-* Go to "Admisitration / Compte administrateur"
+* Go to "Administration / Compte administrateur"
 
-Then in the "Autorisations et alertes" section enable  BasicAuth authentification.
+Then in the "Autorisations et alertes" section enable  BasicAuth authentication.
 
 ## Disclaimer/Licenses
 This work is licensed under the 
@@ -86,7 +86,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 This web app is written in [Flutter](https://flutter.dev/docs), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
 
-I would like to thanks [Didier Boelens](https://www.didierboelens.com/fr/blog/) for his Blog. Many articles are very handful to understand Flutter's internal behavior.
+I would like to thank [Didier Boelens](https://www.didierboelens.com/fr/blog/) for his Blog. Many articles are very handful to understand Flutter's internal behavior.
 
 Boondmanager name and Boondmanager logo are trademarks of [Wish SAS](https://www.boondmanager.com/mentions-legales/) 
 

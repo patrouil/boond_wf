@@ -14,11 +14,12 @@
  */
 
 import 'package:flutter/material.dart';
+
+import 'package:logging/logging.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:line_awesome_icons/line_awesome_icons.dart';
 
 import '../entity/BoondAction.dart';
-import 'package:logging/logging.dart';
-import 'package:flutter/cupertino.dart';
 
 class BoondActionWidget extends StatefulWidget {
   static final Logger log = Logger("BoondActionWidget");
@@ -59,6 +60,7 @@ class _BoondActionWidgetState extends State<BoondActionWidget> {
 
     return TextFormField(
         readOnly: !this.widget.editEnabled,
+        textInputAction: TextInputAction.none,
         showCursor: this.widget.editEnabled,
         enabled: this.widget.editEnabled,
         controller: controler,
@@ -66,7 +68,6 @@ class _BoondActionWidgetState extends State<BoondActionWidget> {
           border: OutlineInputBorder(),
           labelText: 'Message',
         ),
-        // expands: true,
         minLines: 5,
         maxLines: 30,
         onChanged: (String v) {

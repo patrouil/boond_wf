@@ -7,3 +7,7 @@ License comment update for each file.
 Added About Page.
 
 Display README.md in the About page.
+
+## [0.0.3] - 29 Oct 2020
+Candidate and Actions From refactoring. Code cleaning.
+Adder filtering of meaningless email attachemens (jpg, html) while merging to a Boond Action.

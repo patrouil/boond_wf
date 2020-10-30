@@ -13,13 +13,14 @@
  *
  */
 
-import 'package:boond_api/net/BoondApiError.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:logging/logging.dart';
 import 'package:shared_preferences_settings/shared_preferences_settings.dart';
 
 import 'package:bloc/bloc.dart';
 
+import 'package:flutter/cupertino.dart';
+
+import 'package:boond_api/net/BoondApiError.dart';
 import 'package:boond_api/boond_api.dart' as boond;
 
 import '../ui/candidate/BoondSettings.dart' show BoondSettings;
@@ -39,12 +40,10 @@ class BoondCandidateBloc
   /// Candidate being currently displayed / edited.
   boond.CandidateGet editedCandidate;
   BoondAction editedActions;
-  //boond.ActionsAttributes editedActions;
-  //List<MailNavigatorMessagePart> attachements;
 
   ///
   BoondCandidateBloc() : super(BoondCandidateUIStateDisconnected()) {
-    _log.level = Level.FINEST;
+    //_log.level = Level.FINEST;
   }
 
   ///
@@ -80,7 +79,6 @@ class BoondCandidateBloc
         this.editedActions = null;
 
         yield BoondCandidateUIStateLoaded(candidate: this.editedCandidate);
-        // yield BoondCandidateUIStateModified();
         //
       } else if (event is BoondCandidateUIEventEditing) {
         yield BoondCandidateUIStateModified();
@@ -114,16 +112,18 @@ class BoondCandidateBloc
 
     try {
       _log.fine("[_handleSaveRequest] saving ${this.editedCandidate}");
+      // save candidates data.
       this.editedCandidate =
           await this.model.saveCandidate(this.editedCandidate);
-// save action
-
+      // at this step the candidate object has an id.
       r.add(BoondCandidateUIStateSaved(candidate: this.editedCandidate));
-      // keep result to  get action id for documents.
-      _log.fine("[_handleSaveRequest] saving ${this.editedActions}");
 
+      _log.fine("[_handleSaveRequest] saving ${this.editedActions}");
+      // save action data.
+      // get and empty action related to the Candidate.
       boond.ActionsGet actions =
           await this.model.newActions(this.editedCandidate);
+
       if (actions != null) {
         actions.data.attributes.typeOf = this.editedActions.typeOf;
         // TODO deplacer cette ligne dans le widget.
@@ -134,7 +134,7 @@ class BoondCandidateBloc
         actions.data.attributes.text = this.editedActions.bodyText;
       }
       actions = await this.model.saveActions(actions);
-
+      // at the step we have an actions objects with a valid ID.
       // at last post documents related to actions.
       try {
         for (BoondActionAttachment p in this.editedActions.attachments) {
@@ -160,32 +160,39 @@ class BoondCandidateBloc
           BoondCandidateUIStateInfo(infoMessage: "candidate and action saved"));
 
       // AT THE END CLEAN UP ACTION CONTENT
-      this.editedActions = BoondAction(bodyText: "saved");
+      this.editedActions = BoondAction();
 
       r.add(BoondCandidateUIStateModified());
       //
     } on boond.BoondApiError catch (e) {
-      r.add(BoondCandidateUIStateWarning(
-          warningMessage: "saving error : ${e.toString()}"));
+      String m = e.reasonPhrase;
+
+      r.add(BoondCandidateUIStateWarning(warningMessage: "saving error : $m"));
     }
     return r;
   }
 
+  static final List<String> _validMimeTypes = ["word", "application/pdf"];
+
   Future<List<BoondCandidateUIState>> _handleMergeRequest(
       BoondCandidateUIEventMerge event) async {
+    // if no current candidate to merge create an emptu one
     List<BoondCandidateUIState> r = List<BoondCandidateUIState>();
     if (this.editedCandidate == null) {
       this.editedCandidate = await this.model.newCandidate();
     }
+    // notify a new candidate loaded.
     r.add(BoondCandidateUIStateMergeSender(
         senderFullName: event.messageToMerge.fromFullName,
         senderEmail: event.messageToMerge.fromEmail));
 
+    // make a new action fro mthe email.
     this.editedActions =
         BoondAction.fromMailNavigatorMessage(event.messageToMerge);
     this.editedActions.typeOf =
         await Settings().getInt(BoondSettings.BoondDefaultActionTypeOfKey, 0);
-
+    this.editedActions.filterMimeType(_validMimeTypes);
+    // notify of this new action.
     r.add(new BoondCandidateUIStateMergeAction(
         actionMessage: this.editedActions));
 

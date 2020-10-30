@@ -69,7 +69,7 @@ class BoondCandidateModel {
 
   /// Default Constructor
   BoondCandidateModel() {
-    _log.level = Level.FINE;
+    //_log.level = Level.FINE;
   }
 
 // Private Methods
