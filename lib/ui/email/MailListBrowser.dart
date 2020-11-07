@@ -19,9 +19,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'package:quiver/cache.dart' as QuiverCache;
+
 import '../../business/MailNavigatorBloc.dart';
 import '../../business/MailUIState.dart';
 import '../../business/MailUIEvent.dart';
+import '../../entity/MailNavigatorMessage.dart';
 
 import 'MaiListItem.dart';
 
@@ -29,7 +32,7 @@ class MailListBrowser extends StatefulWidget {
   static final Logger _log = Logger('MailListBrowser');
 
   MailListBrowser({Key key}) : super(key: key) {
-    //_log.level = Level.FINE;
+    _log.level = Level.FINE;
   }
 
   @override
@@ -43,6 +46,23 @@ class _MailListBrowserState extends State<MailListBrowser> {
       ListTile(title: Text("connect to your GMail first"));
 
   List<String> messageIdList;
+  Map<String, MailNavigatorMessage> mailCache;
+
+  @override
+  void initState() {
+    super.initState();
+    this._purgeCache();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    this._purgeCache();
+  }
+
+  void _purgeCache() {
+    this.mailCache = Map<String, MailNavigatorMessage>();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,6 +72,7 @@ class _MailListBrowserState extends State<MailListBrowser> {
         MailUIStateConnected(infoMessage: null).runtimeType,
         MailUIStateDisconnected(infoMessage: null).runtimeType,
         MailUIStateInboxListLoaded(messageIdList: null).runtimeType,
+        MailUIStateHeaderLoaded(message: null).runtimeType,
         MailUIStateMessageDeleted(messageIdList: null).runtimeType,
       ];
       _log.fine(
@@ -59,13 +80,24 @@ class _MailListBrowserState extends State<MailListBrowser> {
 
       if ((state is MailUIStateInboxListLoaded)) {
         this.messageIdList = state.messageIdList;
-      } else if ((state is MailUIStateMessageDeleted)) {
+        this._purgeCache();
+      }
+      //
+      else if ((state is MailUIStateMessageDeleted)) {
         for (String id in state.messageIdList) {
           _log.fine("[builder] list builder remove $id");
           this.messageIdList.remove(id);
         }
-      } else if (state is MailUIStateDisconnected) {
+      }
+      //
+      else if (state is MailUIStateDisconnected) {
         this.messageIdList = null;
+        this._purgeCache();
+      }
+      //
+      else if (state is MailUIStateHeaderLoaded) {
+        MailNavigatorMessage msg = state.message;
+        this.mailCache[msg.id] = msg;
       }
 
       return criteria.contains(state.runtimeType);
@@ -80,6 +112,7 @@ class _MailListBrowserState extends State<MailListBrowser> {
       }
       return ListView.builder(
           reverse: true,
+          primary: false,
           scrollDirection: Axis.vertical,
           itemCount: this.messageIdList?.length ?? 1,
           itemBuilder: (BuildContext c, int idx) {
@@ -91,12 +124,17 @@ class _MailListBrowserState extends State<MailListBrowser> {
   }
 
   Widget _mailItemBuilder(BuildContext c, int entryIndex) {
-    _log.fine("[_mailItemBuilder] entry ${entryIndex}");
-
     if (this.messageIdList == null) return notConnectedWidget;
-    MailNavigatorBloc mailBloc = BlocProvider.of<MailNavigatorBloc>(c);
 
     String msgId = this.messageIdList[entryIndex];
-    return MailListItem(msgId: msgId);
+    _log.fine("[_mailItemBuilder] entry ${entryIndex} / $msgId");
+    MailNavigatorMessage msg = mailCache[msgId];
+    MailNavigatorBloc mailBloc = BlocProvider.of<MailNavigatorBloc>(c);
+
+    if (msg == null) {
+      // claim add to cache.
+      mailBloc.add(MailUIEventMessageHeaderRequest(msgId: msgId));
+    }
+    return MailListItem(mailHeader: msg);
   }
 }

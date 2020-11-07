@@ -5,6 +5,7 @@ description: A GUI to read email and feed Boond Candidate database
 # pub.dev using `pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 author: patrouil
+version: 0.0.4
 
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
@@ -18,7 +19,7 @@ author: patrouil
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 #
 #
-version: 0.0.1
+
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
