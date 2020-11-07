@@ -43,7 +43,7 @@ class BoondCandidateBloc
 
   ///
   BoondCandidateBloc() : super(BoondCandidateUIStateDisconnected()) {
-    //_log.level = Level.FINEST;
+    _log.level = Level.FINEST;
   }
 
   ///
@@ -126,9 +126,7 @@ class BoondCandidateBloc
 
       if (actions != null) {
         actions.data.attributes.typeOf = this.editedActions.typeOf;
-        // TODO deplacer cette ligne dans le widget.
-        Settings().save(BoondSettings.BoondDefaultActionTypeOfKey,
-            this.editedActions.typeOf);
+        BoondSettings.newActionType = this.editedActions.typeOf;
 
         actions.data.attributes.creationDate = this.editedActions.creationDate;
         actions.data.attributes.text = this.editedActions.bodyText;
@@ -138,12 +136,27 @@ class BoondCandidateBloc
       // at last post documents related to actions.
       try {
         for (BoondActionAttachment p in this.editedActions.attachments) {
-          boond.DocumentsPost postDoc = boond.DocumentsPost(
-              parentId: actions.data.id,
-              parentType: actions.data.type,
-              filename: p.filename,
-              fileContent: p.fileContent,
-              fileType: p.fileType);
+          boond.DocumentsPost postDoc;
+
+          if (await BoondSettings.isActionAttachment) {
+            _log.fine("[_handleSaveRequest] attach to action");
+
+            postDoc = boond.DocumentsPost(
+                parentId: actions.data.id,
+                parentType: actions.data.type,
+                filename: p.filename,
+                fileContent: p.fileContent,
+                fileType: p.fileType);
+          } else {
+            _log.fine("[_handleSaveRequest] attach to candidate");
+
+            postDoc = boond.DocumentsPost(
+                parentId: this.editedCandidate.data.id,
+                parentType: 'candidateResume',
+                filename: p.filename,
+                fileContent: p.fileContent,
+                fileType: p.fileType);
+          }
 
           await this.model.saveDocument(postDoc);
         }
@@ -159,7 +172,8 @@ class BoondCandidateBloc
       r.add(
           BoondCandidateUIStateInfo(infoMessage: "candidate and action saved"));
 
-      // AT THE END CLEAN UP ACTION CONTENT
+      // AT THE END CLEAN UP Candidate and ACTION CONTENT
+      this.editedCandidate = null;
       this.editedActions = BoondAction();
 
       r.add(BoondCandidateUIStateModified());
@@ -176,17 +190,35 @@ class BoondCandidateBloc
 
   Future<List<BoondCandidateUIState>> _handleMergeRequest(
       BoondCandidateUIEventMerge event) async {
-    // if no current candidate to merge create an emptu one
     List<BoondCandidateUIState> r = List<BoondCandidateUIState>();
+
+    // if no current candidate to merge
+    // a lookup as not ben done.
+    // search for a user with the same email.
+    // if not found create an emptu one
     if (this.editedCandidate == null) {
-      this.editedCandidate = await this.model.newCandidate();
+      String s = event.messageToMerge.fromEmail;
+      boond.CandidateSearch canLookup = await this
+          .model
+          .searchCandidates(["keywordsType=emails", "keywords=$s"]);
+
+      if (canLookup.data.isEmpty) {
+        this.editedCandidate = await this.model.newCandidate();
+        r.add(BoondCandidateUIStateInfo(infoMessage: "new candidate creation"));
+      } else {
+        this.editedCandidate =
+            await this.model.getCandidate(canLookup.data.first.id);
+        r.add(BoondCandidateUIStateInfo(
+            infoMessage:
+                "found ${canLookup.data.length} matching candidate(s)"));
+      }
     }
     // notify a new candidate loaded.
     r.add(BoondCandidateUIStateMergeSender(
         senderFullName: event.messageToMerge.fromFullName,
         senderEmail: event.messageToMerge.fromEmail));
 
-    // make a new action fro mthe email.
+    // make a new action fro the email.
     this.editedActions =
         BoondAction.fromMailNavigatorMessage(event.messageToMerge);
     this.editedActions.typeOf =
@@ -205,7 +237,7 @@ class BoondCandidateBloc
 
     boond.CandidateSearch s = await this.model.searchCandidates(event.criteria);
 
-    if (s.data.length == 0) {
+    if (s.data.isEmpty) {
       r.add(BoondCandidateUIStateInfo(infoMessage: "no candidate found"));
     }
     // load the first one.

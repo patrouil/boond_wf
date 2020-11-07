@@ -123,7 +123,10 @@ class _BoondCandidateActionsState extends State<BoondCandidateActions> {
         final List<Type> criteria = [
           BoondCandidateUIStateConnected(infoMessage: null).runtimeType,
           BoondCandidateUIStateDisconnected().runtimeType,
-          BoondCandidateUIStateLoaded(candidate: null).runtimeType
+          BoondCandidateUIStateLoaded(candidate: null).runtimeType,
+          BoondCandidateUIStateMergeSender(
+                  senderEmail: null, senderFullName: null)
+              .runtimeType
         ];
 
         _log.fine("[_openUrlButton] condition <${state}>");
