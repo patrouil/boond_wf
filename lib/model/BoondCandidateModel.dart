@@ -86,12 +86,9 @@ class BoondCandidateModel {
     try {
       _log.fine("[connect] begin $context ");
 
-      String clientToken =
-          await Settings().getString(BoondSettings.BoondClientTokenKey, null);
-      String clientKey =
-          await Settings().getString(BoondSettings.BoondClientKeyKey, null);
-      String workspace = await Settings()
-          .getString(BoondSettings.BoondServerNameKey, BoondApi.LIVE_HOSTNAME);
+      String clientToken = await BoondSettings.clientToken;
+      String clientKey = await BoondSettings.clientKey;
+      String workspace = await BoondSettings.serverHostName;
 
       BoondApi bapi = await BoondAuthBrowser.clientViaUserConsent(
         context: context,

@@ -247,6 +247,7 @@ class _BasicCandidateFormState extends State<BasicCandidateForm> {
         BoondCandidateUIStateMergeSender(
                 senderFullName: null, senderEmail: null)
             .runtimeType,
+        BoondCandidateUIStateSaved(candidate: null).runtimeType,
       ];
       log.fine("[build] condition <${state}>");
       // if build will be trigger. Get in sync with candidate value.

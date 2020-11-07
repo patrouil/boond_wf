@@ -24,13 +24,16 @@ import '../../widget/settings_widget.dart';
 class BoondSettings extends StatelessWidget {
   static final Logger _log = Logger('BoondSettings');
 
-  static const String BoondServerNameKey = "mail2boond.boond.server.name";
-  static const String BoondUserNameKey = "mail2boond.boond.user.name";
-  static const String BoondClientKeyKey = "mail2boond.boond.client_key.key";
-  static const String BoondClientTokenKey = "mail2boond.boond.client_token.key";
+  static const String BoondServerNameKey = "boond-wf.boond.server.name";
+
+  static const String BoondUserNameKey = "boond-wf.boond.user.name";
+  static const String BoondClientKeyKey = "boond-wf.boond.client_key.key";
+  static const String BoondClientTokenKey = "boond-wf.boond.client_token.key";
+  static const String BoondAttachmentRuleKey =
+      "boond-wf.boond.attachmnt.rule.key";
 
   static const String BoondDefaultActionTypeOfKey =
-      "mail2boond.boond.actions.typeOf.key";
+      "boond-wf.boond.actions.typeOf.key";
 
   final String title;
 
@@ -51,6 +54,13 @@ class BoondSettings extends StatelessWidget {
               BoondApi.LIVE_HOSTNAME: 'Production',
               BoondApi.SANDBOX_HOSTNAME: 'Recette'
             }),
+        SwitchSettingsTile(
+          settingKey: BoondAttachmentRuleKey,
+          title: ' attachments link rule',
+          subtitle: 'link to actions',
+          subtitleIfOff: 'link to candidate resume',
+          defaultValue: true,
+        ),
         TextFieldSettingsTile(
           settingKey: BoondClientKeyKey,
           title: "Boond workspace Client Key :",
@@ -61,5 +71,31 @@ class BoondSettings extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  static Future<String> get clientToken async {
+    return await Settings().getString(BoondSettings.BoondClientTokenKey, null);
+  }
+
+  static Future<String> get clientKey async {
+    return await Settings().getString(BoondSettings.BoondClientKeyKey, null);
+  }
+
+  static Future<String> get serverHostName async {
+    return await Settings()
+        .getString(BoondSettings.BoondServerNameKey, BoondApi.LIVE_HOSTNAME);
+  }
+
+  static Future<int> get defaultActionType async {
+    return await Settings()
+        .getInt(BoondSettings.BoondDefaultActionTypeOfKey, 0);
+  }
+
+  static set newActionType(int t) {
+    Settings().save(BoondSettings.BoondDefaultActionTypeOfKey, t);
+  }
+
+  static Future<bool> get isActionAttachment async {
+    return await Settings().getBool(BoondSettings.BoondAttachmentRuleKey, true);
   }
 }
