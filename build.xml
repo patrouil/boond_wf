@@ -20,7 +20,13 @@
     <property name="src.dir"     value="lib"/>
     <property name="build.dir"   value="build"/>
 
-  <target name="clean">
+    <!-- ALWAYS Change the release number you are working on
+each command underneath uses a git checkout with this version -->
+
+    <property name="version" value="0.0.4-dev" />
+
+
+    <target name="clean">
       <echo message="clean" />
 
       <delete dir="build/web"/>
@@ -31,6 +37,16 @@
 
     </target>
 
+    <target name="ckeckout" >
+        <echo message="git checout" />
+        <exec executable="git">
+            <arg line="ckeckout ${version}"/>
+        </exec>
+        <exec executable="git">
+            <arg line="pull"/>
+        </exec>
+
+    </target>
     <target name="compile" >
         <echo message="compiling" />
         <exec executable="flutter">
