@@ -27,11 +27,7 @@ import '../../business/BoondCandidateBloc.dart';
 import '../../business/BoondCandidateUIState.dart';
 
 class CandidateListBrowser extends StatefulWidget {
-  static final Logger _log = Logger('CandidateListBrowser');
-
-  CandidateListBrowser({Key key}) : super(key: key) {
-    //_log.level = Level.FINE;
-  }
+  const CandidateListBrowser({Key key}) : super(key: key);
 
   @override
   _CandidateListBrowserState createState() => _CandidateListBrowserState();
@@ -40,7 +36,7 @@ class CandidateListBrowser extends StatefulWidget {
 class _CandidateListBrowserState extends State<CandidateListBrowser> {
   static final Logger _log = Logger('CandidateListBrowser');
 
-  boond.CandidateSearch candidateList;
+  boond.CandidateSearch _candidateList;
 
   static final ListTile notConnectedWidget =
       ListTile(title: Text("connect to Boond Manager First"));
@@ -67,20 +63,20 @@ class _CandidateListBrowserState extends State<CandidateListBrowser> {
       BoondCandidateBloc boondBloc = BlocProvider.of<BoondCandidateBloc>(c);
 
       if ((s is BoondCandidateUIStateLookupDone)) {
-        this.candidateList = s.candidateFound;
+        this._candidateList = s.candidateFound;
       } else if (s is BoondCandidateUIStateConnected) {
         // once connected trigger a mail list claim.
         //boondBloc.add(BoondCandidateUIEventLookupRequest(criteria: null));
       } else if (s is BoondCandidateUIStateDisconnected) {
-        this.candidateList = null;
+        this._candidateList = null;
       }
 
       Widget w = ListView.builder(
           reverse: true,
           itemCount:
-              (this.candidateList == null || this.candidateList.data == null)
+              (this._candidateList == null || this._candidateList.data == null)
                   ? 1
-                  : this.candidateList.data.length,
+                  : this._candidateList.data.length,
           itemBuilder: (BuildContext _context, int idx) {
             return _candidateItemBuilder(_context, idx);
           });
@@ -122,10 +118,10 @@ class _CandidateListBrowserState extends State<CandidateListBrowser> {
 
     if (!boondBloc.isConnected())
       resultW = notConnectedWidget;
-    else if ((this.candidateList == null || this.candidateList.data == null))
+    else if ((this._candidateList == null || this._candidateList.data == null))
       resultW = emptyListWidget;
     else {
-      boond.CandidateSearchData data = this.candidateList.data[entryIndex];
+      boond.CandidateSearchData data = this._candidateList.data[entryIndex];
       resultW = _candidateListItem(boondBloc, data);
     }
     return resultW;

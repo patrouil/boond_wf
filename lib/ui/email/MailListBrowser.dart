@@ -31,9 +31,7 @@ import 'MaiListItem.dart';
 class MailListBrowser extends StatefulWidget {
   static final Logger _log = Logger('MailListBrowser');
 
-  MailListBrowser({Key key}) : super(key: key) {
-    _log.level = Level.FINE;
-  }
+  const MailListBrowser({Key key}) : super(key: key);
 
   @override
   _MailListBrowserState createState() => _MailListBrowserState();

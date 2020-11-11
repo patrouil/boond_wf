@@ -18,22 +18,18 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class ConnectButton extends StatefulWidget {
-  static final Logger log = Logger("ConnectButton");
   final Icon icon;
   final String tooltip;
   final bool Function() isConnected;
   final void Function() onConnect;
 
   /// Default Constructor
-  ConnectButton(
+  const ConnectButton(
       {Icon this.icon,
       String this.tooltip,
       bool Function() this.isConnected,
       void Function() this.onConnect})
-      : super() {
-    //log.level = Level.FINE;
-    log.fine("[ConnectButton] constructor");
-  }
+      : super();
 
   @override
   State<StatefulWidget> createState() => _ConnectButtonState();
@@ -65,7 +61,6 @@ class _ConnectButtonState extends State<ConnectButton> {
         //width: super.widget.icon.size * 3,
         //height: super.widget.icon.size * 3,
         child: IconButton(
-          // alignment: Alignment.center,
           icon: super.widget.icon,
           tooltip: this.getToolTip(),
           onPressed: super.widget.onConnect,
