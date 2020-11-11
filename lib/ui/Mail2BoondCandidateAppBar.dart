@@ -23,7 +23,6 @@ class Mail2BoondCandidateAppBar extends AppBar {
 
   Mail2BoondCandidateAppBar(title)
       : super(
-          leading: Mail2BoondMenuManager(),
           title: Text(title),
           toolbarOpacity: 0.5,
           actions: [],

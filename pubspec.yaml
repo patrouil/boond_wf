@@ -3,7 +3,7 @@ description: A GUI to read email and feed Boond Candidate database
 
 # The following line prevents the package from being accidentally published to
 # pub.dev using `pub publish`. This is preferred for private packages.
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+publish_to: 'none'
 author: patrouil
 version: 0.0.4
 
@@ -60,7 +60,7 @@ dependencies:
     #path : ../boond_api
     git:
       url : https://github.com/patrouil/boond_api.git
-      ref : 0.0.1
+      ref : master
   # utilities at the end due to namespace collision.
   logging: ^0.11.4
   quiver: ^2.1.3
