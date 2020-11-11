@@ -37,7 +37,7 @@ class BoondSettings extends StatelessWidget {
 
   final String title;
 
-  BoondSettings({String this.title = "Boond Manager Settings"});
+  const BoondSettings({this.title = "Boond Manager Settings"});
 
   @override
   Widget build(BuildContext context) {

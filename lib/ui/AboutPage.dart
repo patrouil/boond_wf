@@ -20,18 +20,17 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:logging/logging.dart';
 
 class AboutPage extends StatefulWidget {
-  final Logger _log = Logger('AboutPage');
-
   static String route = "/about";
 
-  AboutPage() : super() {
-    // _log.level = Level.FINE;
-  }
+  const AboutPage() : super();
+
   @override
   State<StatefulWidget> createState() => _AboutPageState();
 }
 
 class _AboutPageState extends State<AboutPage> {
+  static final Logger _log = Logger('AboutPage');
+
   static String _content;
 
   @override
@@ -43,16 +42,16 @@ class _AboutPageState extends State<AboutPage> {
     if (_content == null) {
       DefaultAssetBundle.of(c).loadString('README.md').then((value) {
         setState(() => _content = value);
-      }).catchError(() => this.widget._log.fine("[loadAsset] load error"));
+      }).catchError(() => _log.fine("[loadAsset] load error"));
     }
-    this.widget._log.fine("[loadAsset] end of load");
+    _log.fine("[loadAsset] end of load");
 
     return _content ?? "";
   }
 
   @override
   Widget build(BuildContext context) {
-    this.widget._log.fine("[build] start");
+    _log.fine("[build] start");
 
     String data = this._loadAboutText(context);
 

@@ -33,9 +33,7 @@ class MailListItem extends StatelessWidget {
 
   final MailNavigatorMessage mailHeader;
 
-  MailListItem({Key key, @required this.mailHeader}) : super(key: key) {
-    //_log.level = Level.FINE;
-  }
+  const MailListItem({Key key, @required this.mailHeader}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

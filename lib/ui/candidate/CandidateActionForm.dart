@@ -32,11 +32,7 @@ import '../../widget/BoondDropdownFormField.dart';
 import '../../widget/BoondActionWidget.dart';
 
 class CandidateActionForm extends StatefulWidget {
-  static final Logger log = Logger("CandidateActionForm");
-
-  CandidateActionForm() : super() {
-    // log.level = Level.FINE;
-  }
+  const CandidateActionForm() : super();
 
   @override
   State<StatefulWidget> createState() => _CandidateActionFormState();

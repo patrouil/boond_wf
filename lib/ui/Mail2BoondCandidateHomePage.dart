@@ -18,6 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../business/MailNavigatorBloc.dart';
+import 'Mail2BoondMenuManager.dart';
 import 'email/MailNavigatorPanel.dart';
 import 'candidate/BoondCandidatePanel.dart';
 import '../business/BoondCandidateBloc.dart';
@@ -30,7 +31,7 @@ class Mail2BoondCandidateHomePage extends StatefulWidget {
 
   final String title;
 
-  Mail2BoondCandidateHomePage({Key key, this.title}) : super(key: key);
+  const Mail2BoondCandidateHomePage({Key key, this.title}) : super(key: key);
 
   @override
   _Mail2BoondCandidateHomePageState createState() =>
@@ -62,6 +63,7 @@ class _Mail2BoondCandidateHomePageState
         ],
         child: Scaffold(
           appBar: Mail2BoondCandidateAppBar(widget.title),
+          drawer: Drawer(child: Mail2BoondMenuManager()),
           body: Row(children: <Widget>[
             Flexible(flex: 1, fit: FlexFit.tight, child: MailNavigatorPanel()),
             Flexible(flex: 1, fit: FlexFit.tight, child: BoondCandidatePanel())

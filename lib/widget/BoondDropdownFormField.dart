@@ -14,14 +14,14 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:logging/logging.dart';
+//import 'package:logging/logging.dart';
 import 'package:flutter/cupertino.dart';
 
 typedef LabelGetter<T> = String Function(T value);
 typedef IdGetter<T> = int Function(T value);
 
 class BoondDropdownFormField<T> extends StatefulWidget {
-  static final Logger log = Logger("BoondDropdownFormField");
+  //static final Logger log = Logger("BoondDropdownFormField");
 
   final ValueChanged<T> onChanged;
   final List<T> entries;
@@ -33,7 +33,7 @@ class BoondDropdownFormField<T> extends StatefulWidget {
   final Widget hint;
 
   /// Default Constructor
-  BoondDropdownFormField(
+  const BoondDropdownFormField(
       {Key key,
       @required this.entries,
       this.selectedId,
@@ -51,20 +51,11 @@ class BoondDropdownFormField<T> extends StatefulWidget {
 }
 
 class _BoondDropdownFormFieldState<T> extends State<BoondDropdownFormField> {
-  static final Logger log = Logger("BoondDropdownFormField");
-
-  //List<DropdownMenuItem<T>> menuItems;
-
-  @override
-  initState() {
-    //log.level = Level.FINEST;
-    super.initState();
-  }
+  //static final Logger log = Logger("BoondDropdownFormField");
 
   @override
   Widget build(BuildContext c) {
     T selected;
-    log.fine("[build] building");
 
     List<DropdownMenuItem<T>> l = List<DropdownMenuItem<T>>();
     BoondDropdownFormField<T> parent = (this.widget);
@@ -92,14 +83,10 @@ class _BoondDropdownFormFieldState<T> extends State<BoondDropdownFormField> {
   }
 
   void _handleChange(T selVal) {
-    log.fine("[_handleChange] $selVal");
-
     (this.widget as BoondDropdownFormField<T>).onChanged(selVal);
   }
 
   void _handleOnTap() {
-    log.fine("[_handleOnTap] ");
-
     (this.widget as BoondDropdownFormField<T>).onTap();
   }
 }

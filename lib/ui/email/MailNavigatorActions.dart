@@ -32,7 +32,7 @@ import '../../business/MailUIState.dart';
 
 class MailNavigatorActions extends StatefulWidget {
   /// Default Constructor
-  MailNavigatorActions() : super();
+  const MailNavigatorActions() : super();
 
   @override
   State<StatefulWidget> createState() => _MailNavigatorActionsState();
@@ -149,10 +149,6 @@ class _MailNavigatorActionsState extends State<MailNavigatorActions> {
       mailBloc.add(MailUIEventDeleteRequest(msgId: dispMessage.id));
     }
   }
-
-  ///
-  /// Map mime type with a fancy Icon.
-  ///
 
   void _onTransfertAction() {
     BoondCandidateBloc boondBloc =

@@ -15,51 +15,40 @@
 import 'package:logging/logging.dart';
 import 'package:flutter/material.dart';
 
+import 'package:shared_preferences_settings/shared_preferences_settings.dart';
+
 import '../widget/BoondAuthBrowser.dart';
 
-import '../widget/menu_widget.dart';
 import 'AboutPage.dart';
 import 'Mail2BoondSettings.dart';
 
-enum _Mail2BoondMenuEvent { appsSettings, about }
+class Mail2BoondMenuManager extends StatelessWidget {
+  static final _log = Logger("Mail2BoondMenuManager");
 
-class Mail2BoondMenuManager extends StatefulWidget {
-  final Logger _log = Logger('Mail2BoondMenuManager');
+  const Mail2BoondMenuManager() : super();
 
-  Mail2BoondMenuManager() : super() {
-    // _log.level = Level.FINE;
-  }
-
-  @override
-  Mail2BoondMenuManagerState createState() => Mail2BoondMenuManagerState();
-}
-
-class Mail2BoondMenuManagerState extends State<Mail2BoondMenuManager> {
-  final Logger _log = Logger('Mail2BoondMenuManager');
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  List<PopupMenuEntry<_Mail2BoondMenuEvent>> buildMenu(BuildContext c) {
-    List<PopupMenuEntry<_Mail2BoondMenuEvent>> menuList =
-        new List<PopupMenuEntry<_Mail2BoondMenuEvent>>();
+  List<ListTile> _buildMenuItems(BuildContext c) {
+    List<ListTile> menuList = new List<ListTile>();
     _log.fine("[buildMenu] start");
 
-    menuList.add(MenuItemSettings<_Mail2BoondMenuEvent>(
-      settingKey: BoondAuthBrowser.BOONDUSER_SETTINGS_KEY,
-    ));
+    menuList.add(ListTile(
+        title: Settings().onStringChanged(
+            settingKey: BoondAuthBrowser.BOONDUSER_SETTINGS_KEY,
+            defaultValue: '',
+            childBuilder: (BuildContext context, String value) => Text(
+                  value,
+                  textAlign: TextAlign.left,
+                ))));
 
-    menuList.add(MenuItemText<_Mail2BoondMenuEvent>(
-        entryCode: _Mail2BoondMenuEvent.appsSettings,
-        label: "Settings",
-        icon: Icon(Icons.settings, color: Colors.black)));
+    menuList.add(ListTile(
+        leading: Icon(Icons.settings, color: Colors.black),
+        title: Text("Settings"),
+        onTap: () => Mail2BoondSettings.mainSettings.show(c)));
 
-    menuList.add(MenuItemText<_Mail2BoondMenuEvent>(
-        entryCode: _Mail2BoondMenuEvent.about,
-        label: "About",
-        icon: Icon(Icons.info, color: Colors.black)));
+    menuList.add(ListTile(
+        leading: Icon(Icons.info, color: Colors.black),
+        title: Text("About"),
+        onTap: () => Navigator.of(c).pushNamed(AboutPage.route)));
 
     _log.fine("[buildMenu] done");
 
@@ -68,22 +57,9 @@ class Mail2BoondMenuManagerState extends State<Mail2BoondMenuManager> {
 
   @override
   Widget build(BuildContext context) {
-    return PopupMenuButton<_Mail2BoondMenuEvent>(
-        icon: new Icon(Icons.menu),
-        onSelected: menuSelectedAction,
-        itemBuilder: buildMenu);
-  }
-
-  void menuSelectedAction(_Mail2BoondMenuEvent code) {
-    switch (code) {
-      case _Mail2BoondMenuEvent.appsSettings:
-        Mail2BoondSettings.mainSettings.show(this.context);
-        break;
-      case _Mail2BoondMenuEvent.about:
-        Navigator.of(this.context).pushNamed(AboutPage.route);
-        break;
-      default:
-        throw UnimplementedError();
-    }
+    return ListView(
+      padding: EdgeInsets.zero,
+      children: _buildMenuItems(context),
+    );
   }
 }
