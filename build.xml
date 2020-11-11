@@ -38,9 +38,9 @@ each command underneath uses a git checkout with this version -->
     </target>
 
     <target name="ckeckout" >
-        <echo message="git checout" />
+        <echo message="git checkout" />
         <exec executable="git">
-            <arg line="ckeckout ${version}"/>
+            <arg line="checkout -f ${version}"/>
         </exec>
         <exec executable="git">
             <arg line="pull"/>
