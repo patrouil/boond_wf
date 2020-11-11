@@ -11,3 +11,10 @@ Display README.md in the About page.
 ## [0.0.3] - 29 Oct 2020
 Candidate and Actions From refactoring. Code cleaning.
 Adder filtering of meaningless email attachemens (jpg, html) while merging to a Boond Action.
+
+## [0.0.4] - 10 Nov 2020
+Code review and optimization.
+Menu rewriting.
+Bug Fixed. When deleting an email in the mail list. It disappears immediately.
+Candidate and Actions Forms refactoring. Code cleaning.
+Package generator update.

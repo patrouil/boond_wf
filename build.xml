@@ -16,6 +16,13 @@
 
 <project name="boond_wf" basedir="." default="build">
 
+    <!-- wokflow to build a release pacakge
+    commit all changes on a dev branch.
+    Merge branch with master.
+    Than tag a release version number.
+    Enter that number in the version property
+    A last, launch the build target.
+    -->
     <property environment="env"/>
     <property name="src.dir"     value="lib"/>
     <property name="build.dir"   value="build"/>
@@ -23,7 +30,7 @@
     <!-- ALWAYS Change the release number you are working on
 each command underneath uses a git checkout with this version -->
 
-    <property name="version" value="0.0.4-dev" />
+    <property name="version" value="0.0.4" />
 
 
     <target name="clean">
@@ -33,11 +40,11 @@ each command underneath uses a git checkout with this version -->
       <delete dir="tmp"/>
   </target>
 
-    <target name="build"  depends="clean,compile,package">
+    <target name="build"  depends="clean,checkout,compile,package">
 
     </target>
 
-    <target name="ckeckout" >
+    <target name="checkout" >
         <echo message="git checkout" />
         <exec executable="git">
             <arg line="checkout -f ${version}"/>
