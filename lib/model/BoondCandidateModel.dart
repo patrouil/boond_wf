@@ -16,9 +16,7 @@
 
 import 'package:meta/meta.dart';
 import 'package:logging/logging.dart';
-import 'package:flutter/material.dart';
-
-import 'package:shared_preferences_settings/shared_preferences_settings.dart';
+import 'package:flutter/cupertino.dart';
 
 import 'package:boond_api/boond_api.dart'
     show
@@ -117,7 +115,7 @@ class BoondCandidateModel {
   }
 
   Future<BoondCandidateStatus> close() async {
-    BoondAuthBrowser.forgiveUserConsent();
+    BoondAuthBrowser.forgetUserConsent();
     if (this.boond != null) this.boond.httpClient.close();
     this.boond = null;
     this._appCurrentUser = null;
