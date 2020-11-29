@@ -13,12 +13,13 @@
  *
  */
 
-import 'package:boond_wf/entity/BoondAction.dart';
 import 'package:meta/meta.dart';
 
-import 'package:boond_api/boond_api.dart' as boond show CandidateGet;
+import 'package:boond_api/boond_api.dart' as boond
+    show CandidateGet, CandidateSearch;
 
 import '../entity/MailNavigatorMessage.dart';
+import '../entity/BoondAction.dart';
 
 abstract class BoondCandidateUIEvent {
   const BoondCandidateUIEvent();
@@ -48,9 +49,18 @@ class BoondCandidateUIEventWarning extends BoondCandidateUIEvent {
 }
 
 class BoondCandidateUIEventLookupRequest extends BoondCandidateUIEvent {
-  final List<String> criteria;
+  /// This a a List of List of criteria pair.
+  /// each entry in the first list level leads to a seach process.
+  /// as a result, the aggregate of every search is expected.
+  final List<List<String>> criteria;
 
   const BoondCandidateUIEventLookupRequest({@required this.criteria});
+}
+
+class BoondCandidateUIEventSelectRequest extends BoondCandidateUIEvent {
+  final boond.CandidateSearch listToSelectIn;
+
+  const BoondCandidateUIEventSelectRequest({@required this.listToSelectIn});
 }
 
 class BoondCandidateUIEventLoadRequest extends BoondCandidateUIEvent {

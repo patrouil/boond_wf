@@ -16,12 +16,12 @@
 import 'package:logging/logging.dart';
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' show ListTile;
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:boond_api/boond_api.dart' as boond;
-import '../../entity/MailNavigatorMessage.dart';
 
+import '../../entity/MailNavigatorMessage.dart';
 import '../../business/BoondCandidateUIEvent.dart';
 import '../../business/BoondCandidateBloc.dart';
 import '../../business/BoondCandidateUIState.dart';
@@ -87,7 +87,7 @@ class _CandidateListBrowserState extends State<CandidateListBrowser> {
           return w;
         },
         onAccept: (MailNavigatorMessage data) {
-          //String senderName = data.fromFullName;
+          String senderName = data.fromFullName;
           _log.fine(" [onAccept] dragdrop accept ${data.from}");
           String senderMail = data.fromEmail;
           _log.fine(" [onAccept] dragdrop accept $senderMail");
@@ -97,8 +97,10 @@ class _CandidateListBrowserState extends State<CandidateListBrowser> {
                 warningMessage: "please connect first"));
             return;
           }
-          boondBloc.add(BoondCandidateUIEventLookupRequest(
-              criteria: ["keywordsType=emails", "keywords=$senderMail"]));
+          boondBloc.add(BoondCandidateUIEventLookupRequest(criteria: [
+            ["keywordsType=emails", "keywords=$senderMail"],
+            ["keywordsType=fullName", "keywords=$senderName"],
+          ]));
         },
       );
     }); //;

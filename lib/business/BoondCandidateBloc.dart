@@ -14,17 +14,15 @@
  */
 
 import 'package:logging/logging.dart';
-import 'package:shared_preferences_settings/shared_preferences_settings.dart';
-
-import 'package:bloc/bloc.dart';
 
 import 'package:flutter/cupertino.dart';
+import 'package:bloc/bloc.dart';
+import 'package:shared_preferences_settings/shared_preferences_settings.dart';
 
 import 'package:boond_api/net/BoondApiError.dart';
 import 'package:boond_api/boond_api.dart' as boond;
 
 import '../ui/candidate/BoondSettings.dart' show BoondSettings;
-
 import '../entity/BoondAction.dart';
 import '../model/BoondCandidateModel.dart';
 import '../business/BoondCandidateUIState.dart';
@@ -43,14 +41,15 @@ class BoondCandidateBloc
 
   ///
   BoondCandidateBloc() : super(BoondCandidateUIStateDisconnected()) {
-    _log.level = Level.FINEST;
+    //_log.level = Level.FINEST;
   }
 
   ///
   @override
   Stream<BoondCandidateUIState> mapEventToState(
       BoondCandidateUIEvent event) async* {
-    _log.fine("[mapEventToState] event to map is ${event.toString()}");
+    _log.fine(
+        "[mapEventToState] event to state is ${event.runtimeType.toString()}");
     try {
       //
       if (event is BoondCandidateUIEventConnectRequest) {
@@ -79,6 +78,10 @@ class BoondCandidateBloc
         this.editedActions = null;
 
         yield BoondCandidateUIStateLoaded(candidate: this.editedCandidate);
+        //
+      } else if (event is BoondCandidateUIEventSelectRequest) {
+        yield BoondCandidateUIStateSelectRequest(
+            listToSelectIn: event.listToSelectIn);
         //
       } else if (event is BoondCandidateUIEventEditing) {
         yield BoondCandidateUIStateModified();
@@ -231,21 +234,48 @@ class BoondCandidateBloc
     return r;
   }
 
+  Future<boond.CandidateSearch> searchByEmailAndName(
+      List<List<String>> criteriaSet) async {
+    boond.CandidateSearch sumList = null;
+
+    for (List<String> e in criteriaSet) {
+      _log.fine("[_handleSearchRequest] look for ${e.toString()}");
+
+      boond.CandidateSearch s = await this.model.searchCandidates(e);
+      _log.fine("[_handleSearchRequest] got ${s.data.length}");
+
+      if (sumList == null)
+        sumList = s;
+      else
+        sumList.data.addAll(s.data);
+    }
+    return sumList;
+  }
+
   Future<List<BoondCandidateUIState>> _handleSearchRequest(
       BoondCandidateUIEventLookupRequest event) async {
     List<BoondCandidateUIState> r = List<BoondCandidateUIState>();
 
-    boond.CandidateSearch s = await this.model.searchCandidates(event.criteria);
+    boond.CandidateSearch sumList =
+        await this.searchByEmailAndName(event.criteria);
 
-    if (s.data.isEmpty) {
+    _log.fine(
+        "[_handleSearchRequest] final result is ${sumList?.data?.length}");
+
+    this.editedCandidate = null;
+    if ((sumList == null) || sumList.data.isEmpty) {
       r.add(BoondCandidateUIStateInfo(infoMessage: "no candidate found"));
+      r.add(BoondCandidateUIStateLoaded(candidate: null));
     }
     // load the first one.
-    else {
+    else if (sumList.data.length == 1) {
       r.add(BoondCandidateUIStateInfo(
-          infoMessage: "found ${s.data.length} candidates"));
-
-      this.add(BoondCandidateUIEventLoadRequest(candidateId: s.data.first.id));
+          infoMessage: "found ${sumList.data.length} candidates"));
+      // pas beau doit faire appel direcrement a la fonction de search
+      this.add(
+          BoondCandidateUIEventLoadRequest(candidateId: sumList.data.first.id));
+    } else {
+      r.add(BoondCandidateUIStateSelectRequest(listToSelectIn: sumList));
     }
     return r;
   }

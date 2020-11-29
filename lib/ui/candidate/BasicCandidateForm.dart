@@ -13,15 +13,21 @@
  *
  */
 
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart' show TextFormField, InputDecoration;
+
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:logging/logging.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart' show BlocBuilder, BlocProvider;
 
 import 'package:boond_api/boond_api.dart' as boond
-    show AppDictionnaryGet, AppDictAvailability, CandidateGet;
+    show
+        AppDictionnaryGet,
+        AppDictAvailability,
+        CandidateGet,
+        CandidateSearch,
+        CandidateSearchData;
 
 import '../../entity/MailNavigatorMessage.dart';
 import '../../widget/BoondDropdownFormField.dart';
@@ -29,6 +35,7 @@ import '../../widget/BoondDropdownFormField.dart';
 import '../../business/BoondCandidateBloc.dart';
 import '../../business/BoondCandidateUIEvent.dart';
 import '../../business/BoondCandidateUIState.dart';
+import 'BoondCandidateSelectDialog.dart';
 
 class BasicCandidateForm extends StatefulWidget {
   static final Logger log = Logger("BasicCandidateForm");
@@ -43,11 +50,11 @@ class BasicCandidateForm extends StatefulWidget {
 }
 
 class _BasicCandidateFormState extends State<BasicCandidateForm> {
-  static final Logger log = Logger("BasicCandidateForm");
+  static final Logger log = BasicCandidateForm.log;
 
   static final List<boond.AppDictAvailability> _emptyAvailabilityList = [
     boond.AppDictAvailability(id: 0, value: "")
-  ]; //List<boond.AppDictAvailability>();
+  ];
 
   final _formKey = GlobalKey<FormState>();
 
@@ -210,15 +217,17 @@ class _BasicCandidateFormState extends State<BasicCandidateForm> {
 
   Widget _buildDragWrapper(Widget parentW, BuildContext _context) {
     return DragTarget<MailNavigatorMessage>(
+      //
       builder: (BuildContext _context, List<MailNavigatorMessage> candidateData,
           List<dynamic> rejectedData) {
         return parentW;
       },
-      onAccept: (MailNavigatorMessage data) {
-        //String senderName = data.fromFullName;
-        log.fine(" [_buildDragWrapper.onAccept] dragdrop accept ${data.from}");
+      //
+      onAccept: (MailNavigatorMessage data) async {
+        String senderName = data.fromFullName;
         String senderMail = data.fromEmail;
         log.fine(" [_buildDragWrapper.onAccept] dragdrop accept $senderMail");
+
         BoondCandidateBloc boondBloc =
             BlocProvider.of<BoondCandidateBloc>(_context);
         if (!boondBloc.isConnected()) {
@@ -226,8 +235,32 @@ class _BasicCandidateFormState extends State<BasicCandidateForm> {
               warningMessage: "please connect first"));
           return;
         }
-        boondBloc.add(BoondCandidateUIEventLookupRequest(
-            criteria: ["keywordsType=emails", "keywords=$senderMail"]));
+
+        /// apply a first search on drag n drop event
+        boond.CandidateSearch canList = await boondBloc.searchByEmailAndName([
+          ["keywordsType=emails", "keywords=$senderMail"],
+          ["keywordsType=fullName", "keywords=$senderName"]
+        ]);
+        //// if an empty or single result eceived.
+        /// then a normal Event/sate workflow if triggered
+        if (canList == null ||
+            canList.data.isEmpty ||
+            canList?.data?.length == 1) {
+          boondBloc.add(BoondCandidateUIEventLookupRequest(criteria: [
+            ["keywordsType=emails", "keywords=$senderMail"],
+            ["keywordsType=fullName", "keywords=$senderName"]
+          ]));
+        } else {
+          /// otherwise open a CandidateSelector dialog.
+          /// and push a Loaded request for the selected Candidate.
+          boond.CandidateSearchData selectCan =
+              await BoondCandidateSelectDialog.selectCandidate(
+                  candidates: canList, context: _context);
+          if (selectCan != null) {
+            boondBloc.add(
+                BoondCandidateUIEventLoadRequest(candidateId: selectCan.id));
+          }
+        }
       },
     );
   }
@@ -262,7 +295,21 @@ class _BasicCandidateFormState extends State<BasicCandidateForm> {
       return criteria.contains(state.runtimeType);
     }, //
         builder: (BuildContext c, BoondCandidateUIState s) {
-      log.fine("[build] builder");
+      log.fine("[build] builder ${s.runtimeType.toString()}");
+
+      if (s is BoondCandidateUIStateSelectRequest) {
+        log.fine("[build] builder select request");
+
+        BoondCandidateSelectDialog.selectCandidate(
+                candidates: s.listToSelectIn, context: c)
+            .then((boond.CandidateSearchData d) {
+          log.fine("[build] selectCandidate ${d.id}");
+
+          BoondCandidateBloc b = BlocProvider.of<BoondCandidateBloc>(c);
+          if (b != null)
+            b.add(BoondCandidateUIEventLoadRequest(candidateId: d.id));
+        });
+      }
       Widget w = _buildFormWrapper(c);
 
       return _buildDragWrapper(w, _context);
