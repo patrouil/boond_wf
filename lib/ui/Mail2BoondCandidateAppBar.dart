@@ -16,8 +16,6 @@
 import 'package:flutter/material.dart';
 //import 'package:logging/logging.dart';
 
-import 'Mail2BoondMenuManager.dart';
-
 class Mail2BoondCandidateAppBar extends AppBar {
   //Logger _log = Logger('Mail2BoondCandidateAppBar');
 

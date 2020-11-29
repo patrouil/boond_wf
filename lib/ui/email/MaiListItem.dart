@@ -17,12 +17,11 @@ import 'package:intl/intl.dart' as Intl;
 import 'package:logging/logging.dart';
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' show ListTile;
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../business/MailNavigatorBloc.dart';
 import '../../entity/MailNavigatorMessage.dart';
-import '../../business/MailUIState.dart';
 import '../../business/MailUIEvent.dart';
 
 class MailListItem extends StatelessWidget {
