@@ -13,11 +13,12 @@
  *
  */
 
+import 'package:logging/logging.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' show Scaffold, AppBar;
 
 import 'package:flutter_markdown/flutter_markdown.dart';
-import 'package:logging/logging.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AboutPage extends StatefulWidget {
   static String route = "/about";
@@ -56,15 +57,23 @@ class _AboutPageState extends State<AboutPage> {
     String data = this._loadAboutText(context);
 
     return Scaffold(
-        appBar: AppBar(
-          title: Text('About'),
-        ),
-        body: Center(
+      appBar: AppBar(
+        title: Text('About'),
+      ),
+      body: Center(
           child:
               //Text("hello world"),
               Markdown(
-            data: data,
-          ),
-        ));
+        selectable: true,
+        data: data,
+        onTapLink: (String text, String href, String title) async {
+          _log.fine("[onTapLink] opening $href");
+
+          if (await canLaunch(href)) {
+            await launch(href);
+          }
+        },
+      )),
+    );
   }
 }

@@ -16,10 +16,8 @@
 import 'package:logging/logging.dart';
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' show ListTile;
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import 'package:quiver/cache.dart' as QuiverCache;
 
 import '../../business/MailNavigatorBloc.dart';
 import '../../business/MailUIState.dart';
@@ -29,7 +27,7 @@ import '../../entity/MailNavigatorMessage.dart';
 import 'MaiListItem.dart';
 
 class MailListBrowser extends StatefulWidget {
-  static final Logger _log = Logger('MailListBrowser');
+  static final Logger log = Logger('MailListBrowser');
 
   const MailListBrowser({Key key}) : super(key: key);
 
@@ -38,7 +36,7 @@ class MailListBrowser extends StatefulWidget {
 }
 
 class _MailListBrowserState extends State<MailListBrowser> {
-  static final Logger _log = Logger('MailListBrowser');
+  static final Logger _log = MailListBrowser.log;
 
   static final ListTile notConnectedWidget =
       ListTile(title: Text("connect to your GMail first"));

@@ -13,10 +13,18 @@
  *
  */
 
-import 'package:flutter/material.dart';
-
 import 'package:logging/logging.dart';
+
 import 'package:flutter/cupertino.dart';
+
+import 'package:flutter/material.dart'
+    show
+        TextFormField,
+        InputDecoration,
+        OutlineInputBorder,
+        ListTile,
+        IconButton,
+        Icons;
 import 'package:line_awesome_icons/line_awesome_icons.dart';
 
 import '../entity/BoondAction.dart';
@@ -39,7 +47,7 @@ class BoondActionWidget extends StatefulWidget {
 }
 
 class _BoondActionWidgetState extends State<BoondActionWidget> {
-  static final Logger log = Logger("BoondActionWidget");
+  static final Logger log = BoondActionWidget.log;
 
   @override
   initState() {

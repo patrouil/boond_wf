@@ -40,9 +40,19 @@ each command underneath uses a git checkout with this version -->
       <delete dir="tmp"/>
   </target>
 
-    <target name="build"  depends="clean,checkout,compile,package">
+    <target name="build"  depends="clean, version.update,  changelog.update, compile,package">
 
     </target>
+
+    <target name="version.update" >
+        <echo message="doc generation" />
+        <replaceregexp file="README.md"
+                match="\$VERSION.+\$"
+                flags="g"
+                replace="$VERSION ${version}$"/>
+
+    </target>
+
 
     <target name="checkout" >
         <echo message="git checkout" />
@@ -52,8 +62,8 @@ each command underneath uses a git checkout with this version -->
         <exec executable="git">
             <arg line="pull"/>
         </exec>
-
     </target>
+
     <target name="compile" >
         <echo message="compiling" />
         <exec executable="flutter">
@@ -73,4 +83,65 @@ each command underneath uses a git checkout with this version -->
         <tar basedir="tmp/web"
              tarfile="tmp/boond_wf.tar"/>
     </target>
+
+    <!--
+
+    THANKS TO https://gist.github.com/nzakas/1164118
+
+    Ant target for autogenerating a changelog based on Git tags
+    Workflow:
+    1. Do all of your checkins for a given version.
+    2. When you're ready to officially create a new version, tag it using git tag, such as "git tag v0.3.0".
+    3. If you don't already have a file named CHANGELOG in the root directory, make one.
+    4. Run "ant changelog.update"
+    Assumptions:
+    1. You only use tags for version numbers, that's it.
+    2. You have a file named CHANGELOG that you want to auto-update.
+    3. You want today's date stamped in the CHANGELOG file/
+
+
+-->
+
+    <property name="changelog.range" value=""/>
+
+    <target name="changelog.update">
+        <tstamp>
+            <format property="changelog.date" pattern="dd-MMM-yyyy" locale="en,UK"/>
+        </tstamp>
+
+        <exec executable="git" failonerror="true" outputproperty="changelog.tag">
+            <arg line="tag"/>
+        </exec>
+        <echoproperties prefix="changelog."/>
+
+        <script language="javascript"><![CDATA[
+        //get the two most recent tags to get the diff
+        var tags = project.getProperty("changelog.tag").replace("\r", "").split("\n"),
+            curTag = tags[tags.length-1],
+            priorTag = tags[tags.length-2];
+        project.setProperty("changelog.current", curTag);
+        project.setProperty("changelog.range", priorTag + ".." + curTag);
+    ]]></script>
+
+        <echoproperties prefix="changelog."/>
+
+        <!-- git log -pretty=format:'* %s (%an)' v0.4.0..v0.5.0-->
+        <exec executable="git" failonerror="true" outputproperty="changelog.git">
+            <arg line="log --pretty=format:'* %s (%an)' ${changelog.range}"/>
+        </exec>
+
+        <concat destfile="CHANGELOG.tmp"  fixlastline="true">
+            <header trimleading="yes">## [${changelog.current}] - ${changelog.date} -
+
+                ${changelog.git}
+            </header>
+            <fileset dir="." includes="CHANGELOG" />
+        </concat>
+
+        <delete file="CHANGELOG"/>
+        <move file="CHANGELOG.tmp" tofile="CHANGELOG"/>
+
+    </target>
+
+
 </project>

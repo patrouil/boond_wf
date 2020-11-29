@@ -1,5 +1,6 @@
 # Boondmanager Candidate Workflow
 
+### $VERSION 0.0.4$
 ## Synopis
 Boond WF is a single web page, to ease the transformation of emails sent by Job boards applications  into a Boond Managers Candidate.
 
@@ -9,7 +10,7 @@ On the right side, you can edit the Boond's candidate to be created.
 
 The bottom part of each side contains the action button.
 
-Read here for detailed documentation : https://github.com/patrouil/boond_wf/wiki/00---Home
+Read here for [detailed documentation](https://github.com/patrouil/boond_wf/wiki/00---Home)
 
 ## Usage
 - From your web browser, open the boond_wf URL.

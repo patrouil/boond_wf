@@ -13,20 +13,21 @@
  *
  */
 
-import 'package:boond_wf/business/BoondCandidateUIEvent.dart';
-import 'package:line_awesome_icons/line_awesome_icons.dart';
 import 'package:logging/logging.dart';
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' show ButtonBar, Icons;
 import 'package:flutter_bloc/flutter_bloc.dart' show BlocBuilder, BlocProvider;
 import 'package:url_launcher/url_launcher.dart';
+import 'package:line_awesome_icons/line_awesome_icons.dart';
+
 import 'package:boond_api/boond_api.dart' as boond show CandidateGet;
 
 import '../../widget/notification.dart';
 import '../../widget/ConnectButton.dart';
 import '../../business/BoondCandidateBloc.dart';
 import '../../business/BoondCandidateUIState.dart';
+import '../../business/BoondCandidateUIEvent.dart';
 
 class BoondCandidateActions extends StatefulWidget {
   /// Default Constructor
@@ -86,9 +87,7 @@ class _BoondCandidateActionsState extends State<BoondCandidateActions> {
         return criteria.contains(state.runtimeType);
       },
       builder: (BuildContext c, BoondCandidateUIState s) {
-        // dont know why but have to locate the bloc.
-        BoondCandidateBloc candidateBloc =
-            BlocProvider.of<BoondCandidateBloc>(c);
+        //
         return ConnectButton(
           icon: Icon(LineAwesomeIcons.firefox),
           isConnected: () {
@@ -145,7 +144,8 @@ class _BoondCandidateActionsState extends State<BoondCandidateActions> {
           onConnect: () async {
             _onOpenUrlAction(candidateBloc, candidate);
           },
-          isConnected: () => (candidate?.data?.id != null),
+          isConnected: () =>
+              (candidate?.data?.id != null) && ((candidate?.data?.id != 0)),
           tooltip: "View Candidate",
         );
       },

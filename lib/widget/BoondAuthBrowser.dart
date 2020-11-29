@@ -18,7 +18,6 @@ import 'package:http/http.dart' as http;
 
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences_settings/shared_preferences_settings.dart';
 
 import 'package:boond_api/net/BoondAuth.dart';
@@ -44,7 +43,7 @@ class BoondAuthBrowser {
         });
   }
 
-  static void forgiveUserConsent() {
+  static void forgetUserConsent() {
     Settings().save(BOONDUSERTOKEN_SETTINGS_KEY, "");
   }
 }
@@ -256,7 +255,9 @@ class _BoondAuthUIState extends State<_BoondAuthUI> {
   @override
   Widget build(BuildContext context) {
     final loginActions = Container(
-        width: MediaQuery.of(context).size.width / 2,
+        constraints: BoxConstraints.expand(
+            width: MediaQuery.of(context).size.width / 2,
+            height: double.infinity),
         child: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
           _actionButton(Colors.amber, "Login", context, _onLoginPressed),
           SizedBox(width: 45.0),

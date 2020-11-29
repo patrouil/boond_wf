@@ -13,10 +13,12 @@
  *
  */
 
-import 'package:boond_wf/entity/BoondAction.dart';
 import 'package:meta/meta.dart';
+
 import 'package:boond_api/boond_api.dart' as boond
     show CandidateGet, CandidateSearch;
+
+import '../entity/BoondAction.dart';
 
 abstract class BoondCandidateUIState {
   const BoondCandidateUIState();
@@ -69,6 +71,12 @@ class BoondCandidateUIStateConnected extends BoondCandidateUIStateInfo {
 
   @override
   int get hashCode => super.hashCode;
+}
+
+class BoondCandidateUIStateSelectRequest extends BoondCandidateUIState {
+  final boond.CandidateSearch listToSelectIn;
+
+  const BoondCandidateUIStateSelectRequest({@required this.listToSelectIn});
 }
 
 class BoondCandidateUIStateLookupDone extends BoondCandidateUIState {
@@ -154,22 +162,3 @@ class BoondCandidateUIStateMergeAction extends BoondCandidateUIState {
   @override
   int get hashCode => actionMessage.hashCode;
 }
-/*
-class BoondCandidateUIStateMergeFiles extends BoondCandidateUIState {
-  final List<MailNavigatorMessagePart> attachments;
-
-  BoondCandidateUIStateMergeFiles({@required this.attachments});
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is BoondCandidateUIStateMergeFiles &&
-          runtimeType == other.runtimeType &&
-          attachments == other.attachments;
-
-  @override
-  int get hashCode => attachments.hashCode;
-}
-
-
- */
