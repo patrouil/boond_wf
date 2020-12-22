@@ -41,7 +41,7 @@ class NotificationWrapper extends StyledToast {
             reverseCurve: Curves.fastOutSlowIn,
             dismissOtherOnShow: true,
             movingOnWindowChange: true,
-            locale: null,
+            //locale: null,
             child: child) {
     //log.level = Level.FINE;
   }
