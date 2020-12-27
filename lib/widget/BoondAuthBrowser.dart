@@ -255,14 +255,11 @@ class _BoondAuthUIState extends State<_BoondAuthUI> {
   @override
   Widget build(BuildContext context) {
     final loginActions = Container(
-        constraints: BoxConstraints.expand(
-            width: MediaQuery.of(context).size.width / 2,
-            height: double.infinity),
         child: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-          _actionButton(Colors.amber, "Login", context, _onLoginPressed),
-          SizedBox(width: 45.0),
-          _actionButton(Colors.grey, "Cancel", context, _onCancelPressed)
-        ]));
+      _actionButton(Colors.amber, "Login", context, _onLoginPressed),
+      SizedBox(width: 45.0),
+      _actionButton(Colors.grey, "Cancel", context, _onCancelPressed)
+    ]));
     BoondAuthBrowser.log.fine("[build] begin");
 
     return SimpleDialog(
@@ -274,7 +271,10 @@ class _BoondAuthUIState extends State<_BoondAuthUI> {
         children: [
           Container(
             padding: const EdgeInsets.all(36.0),
-            height: MediaQuery.of(context).size.height * 0.9,
+            constraints: BoxConstraints.expand(
+                width: MediaQuery.of(context).size.width / 2,
+                height: MediaQuery.of(context).size.height * 0.9),
+            //height: MediaQuery.of(context).size.height * 0.9,
             color: Colors.white,
             child: Column(
               children: <Widget>[
