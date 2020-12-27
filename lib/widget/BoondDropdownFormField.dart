@@ -57,7 +57,8 @@ class _BoondDropdownFormFieldState<T> extends State<BoondDropdownFormField> {
   Widget build(BuildContext c) {
     T selected;
 
-    List<DropdownMenuItem<T>> l = List<DropdownMenuItem<T>>();
+    List<DropdownMenuItem<T>> l =
+        List.empty(growable: true); // List<DropdownMenuItem<T>>();
     BoondDropdownFormField<T> parent = (this.widget);
 
     for (T element in parent.entries) {
@@ -77,16 +78,8 @@ class _BoondDropdownFormFieldState<T> extends State<BoondDropdownFormField> {
       items: l,
       value: selected,
       hint: (this.widget as BoondDropdownFormField<T>).hint,
-      onChanged: _handleChange,
-      onTap: _handleOnTap,
+      onChanged: (this.widget as BoondDropdownFormField<T>).onChanged,
+      onTap: (this.widget as BoondDropdownFormField<T>).onTap,
     );
-  }
-
-  void _handleChange(T selVal) {
-    (this.widget as BoondDropdownFormField<T>).onChanged(selVal);
-  }
-
-  void _handleOnTap() {
-    (this.widget as BoondDropdownFormField<T>).onTap();
   }
 }
